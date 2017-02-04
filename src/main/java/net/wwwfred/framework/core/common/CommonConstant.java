@@ -18,7 +18,7 @@ public class CommonConstant {
     
     private static final String PROPERTIES_CONFIG_FILE_NAME = "config.properties";
     
-	public static String CLASS_NAME_PACKAGE_PREFIX = PropertiesUtil.getValue(PROPERTIES_CONFIG_FILE_NAME, "class_name_package_prefix", "com.teshehui");
+	public static String CLASS_NAME_PACKAGE_PREFIX = PropertiesUtil.getValue(PROPERTIES_CONFIG_FILE_NAME, "class_name_package_prefix", "net.wwwfred.framework");
 	
     /**
      * 系统类型定义

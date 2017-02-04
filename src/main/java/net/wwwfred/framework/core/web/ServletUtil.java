@@ -26,10 +26,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.wwwfred.framework.annotation.FieldTypeAnnotation;
 import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
-import net.wwwfred.framework.enumeration.FieldTypeEnum;
-import net.wwwfred.framework.po.UploadFilePO;
 import net.wwwfred.framework.util.code.CodeUtil;
 import net.wwwfred.framework.util.io.IOUtil;
 import net.wwwfred.framework.util.json.JSONUtil;

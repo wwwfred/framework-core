@@ -1,4 +1,4 @@
-package net.wwwfred.framework.enumeration;
+package net.wwwfred.framework.core.web;
 
 /**
  * RequestObjectType

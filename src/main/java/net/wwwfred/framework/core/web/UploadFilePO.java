@@ -1,4 +1,6 @@
-package net.wwwfred.framework.po;
+package net.wwwfred.framework.core.web;
+
+import net.wwwfred.framework.po.BasePO;
 
 public class UploadFilePO extends BasePO {
 
