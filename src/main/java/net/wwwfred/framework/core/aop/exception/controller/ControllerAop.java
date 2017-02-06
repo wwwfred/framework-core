@@ -78,11 +78,16 @@ public class ControllerAop {
 				LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
 			}
 		}
+	    catch (TeshehuiRuntimeException e)
+	    {
+	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+	    	result = new BaseResponse<Object>(e.getCode(), e.getMessage());
+	    }
 	    catch (Throwable e) 
 	    {
-	    	TeshehuiRuntimeException te =  (e instanceof TeshehuiRuntimeException)?(TeshehuiRuntimeException)e:new TeshehuiRuntimeException(e);
-	    	result = JSON.toJSONString(new BaseResponse<Object>(te.getCode(), te.getMessage()));
 	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+	    	TeshehuiRuntimeException te = new TeshehuiRuntimeException(e);
+	    	result = new BaseResponse<Object>(te.getCode(), te.getMessage());
 	    }
 	    
 		return result;
