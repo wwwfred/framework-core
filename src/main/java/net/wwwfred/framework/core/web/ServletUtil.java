@@ -139,6 +139,17 @@ public class ServletUtil
 		return map;
 	}
 	
+	public static Map<String, Object> getParamMapFromRequest(HttpServletRequest request)
+	{
+		Map<String,Object> map = new HashMap<String, Object>();
+		Map<String,List<Object>> paramMaps = getMapFromRequest(request);
+		for (String key : paramMaps.keySet()) {
+			Object value = CodeUtil.isEmpty(paramMaps.get(key))?null:paramMaps.get(key).get(0);
+			map.put(null, value);
+		}
+		return map;
+	}
+	
 	/** 根据HttpServletRequest 获取请求Map */
 	public static Map<String, List<Object>> getMapFromRequest(HttpServletRequest request)
 	{
