@@ -139,7 +139,7 @@ public class ServletUtil
 		return map;
 	}
 	
-	public static Map<String, Object> getParamMapFromRequest(HttpServletRequest request)
+	public static Map<String, Object> getParameterMap(HttpServletRequest request)
 	{
 		Map<String,Object> map = new HashMap<String, Object>();
 		Map<String,List<Object>> paramMaps = getMapFromRequest(request);
@@ -148,6 +148,11 @@ public class ServletUtil
 			map.put(null, value);
 		}
 		return map;
+	}
+	
+	public static Map<String, List<Object>> getParameterMaps(HttpServletRequest request)
+	{
+		return getMapFromRequest(request);
 	}
 	
 	/** 根据HttpServletRequest 获取请求Map */
