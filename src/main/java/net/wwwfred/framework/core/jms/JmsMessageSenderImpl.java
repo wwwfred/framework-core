@@ -23,13 +23,31 @@ public class JmsMessageSenderImpl implements JmsMessageSender {
 //        System.out.println("---------------生产者发送消息目标："+isDestinationQueue+","+destinationName);   
 //        System.out.println("---------------生产者发了一个消息："+msg);   
         jmsTemplate.send(destination, new MessageCreator() {  
-            @Override  
-            public Message createMessage(Session session) throws JMSException {
-                Message message = session.createMessage();
-                message.setJMSRedelivered(isRedelivered);
-                message.setObjectProperty(destinationName, msg);
-                return message;
-            }  
+//            @Override  
+//            public Message createMessage(Session session) throws JMSException {
+//                Message message = session.createMessage();
+//                message.setJMSRedelivered(isRedelivered);
+//                message.setObjectProperty(destinationName, msg);
+//                return message;
+//            }  
+        	
+        	public Message createMessage(Session session) throws JMSException {
+        		Message message;
+        		if(msg instanceof String)
+        		{
+        			message = session.createTextMessage(msg.toString());
+//					textMessage.setStringProperty("MSG_TYPE", destinationName);
+//        			textMessage.setObjectProperty(destinationName, msg);
+        		}
+        		else
+        		{
+        			message = session.createMessage();
+            		message.setObjectProperty(destinationName, msg);
+        		}
+        		message.setJMSRedelivered(isRedelivered);
+        		return message;
+			}
+        	
         }); 
     }
 	

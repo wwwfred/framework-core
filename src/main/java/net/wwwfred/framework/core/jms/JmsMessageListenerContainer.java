@@ -5,6 +5,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import net.wwwfred.framework.util.code.CodeUtil;
 import net.wwwfred.framework.util.log.LogUtil;
@@ -25,9 +26,18 @@ public abstract class JmsMessageListenerContainer extends DefaultMessageListener
         setMessageListener(new SessionAwareMessageListener<Message>() {
             @Override
             public void onMessage(Message message, Session session) throws JMSException {
-//                System.out.println("onMessage invoke");
-                Object msg = message.getObjectProperty(requestDestinationName);
-//                    System.out.println("消费者："+requestDestinationName+",收到消息内容是：" + msg);
+            	
+            	Object msg;
+            	if(message instanceof TextMessage)
+            	{
+            		msg = ((TextMessage)message).getText();
+            	}
+            	else
+            	{
+//                  System.out.println("onMessage invoke");
+                    msg = message.getObjectProperty(requestDestinationName);
+//                  System.out.println("消费者："+requestDestinationName+",收到消息内容是：" + msg);
+            	}
                 try
                 {
                     handleMessage(msg);
@@ -35,8 +45,16 @@ public abstract class JmsMessageListenerContainer extends DefaultMessageListener
                     {
                         Destination responseDestination = isResponseDestinationQueue?JmsDestinationFactory.buildQueue(responseDestinationName):JmsDestinationFactory.buildTopic(responseDestinationName);
                         MessageProducer producer = session.createProducer(responseDestination);   
-                        Message responseMsg = session.createMessage();
-                        responseMsg.setObjectProperty(responseDestinationName, msg);
+                        Message responseMsg;
+                        if(msg instanceof String)
+                        {
+                        	responseMsg = session.createTextMessage(msg.toString());
+                        }
+                        else
+                        {
+                        	responseMsg = session.createMessage();
+                            responseMsg.setObjectProperty(responseDestinationName, msg);
+                        }
                         producer.send(responseMsg);
 //                        System.out.println("---------------生产者发送消息目标："+isResponseDestinationQueue+","+responseDestinationName);   
 //                        System.out.println("---------------生产者发了一个消息：" + msg);   
