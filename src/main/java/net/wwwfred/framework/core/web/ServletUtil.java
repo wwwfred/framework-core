@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.util.code.CodeUtil;
 import net.wwwfred.framework.util.io.IOUtil;
 import net.wwwfred.framework.util.json.JSONUtil;
@@ -113,7 +113,7 @@ public class ServletUtil
             try {
                 in = request.getInputStream();
             } catch (IOException e) {
-                throw new TeshehuiRuntimeException("getModelFromRequest contentType isJSONData getInputStream illegal",e);
+                throw new FrameworkRuntimeException("getModelFromRequest contentType isJSONData getInputStream illegal",e);
             }
             String jsonString = new String(IOUtil.getByteArrayFromInputStream(in),Charset.forName(requestEncoding));
             IOUtil.closeInputStream(in);
@@ -186,7 +186,7 @@ public class ServletUtil
             try {
                 in = request.getInputStream();
             } catch (IOException e) {
-                throw new TeshehuiRuntimeException("getModelFromRequest contentType isJSONData getInputStream illegal",e);
+                throw new FrameworkRuntimeException("getModelFromRequest contentType isJSONData getInputStream illegal",e);
             }
             String jsonString = new String(IOUtil.getByteArrayFromInputStream(in),Charset.forName(requestEncoding));
             IOUtil.closeInputStream(in);
@@ -533,7 +533,7 @@ public class ServletUtil
             String s = new String(postData,requestEncoding);
             parseKeyValueParam(result, s, requestEncoding);
         } catch (Exception e) {
-            throw new TeshehuiRuntimeException("getHttpRequestParameterMap from httpRequest inputStream illegal",e);
+            throw new FrameworkRuntimeException("getHttpRequestParameterMap from httpRequest inputStream illegal",e);
         }
 		finally
 		{
@@ -734,7 +734,7 @@ public class ServletUtil
         int indexOf = queryString.indexOf("httpUrl=");
         if(indexOf<0)
         {
-            throw new TeshehuiRuntimeException("getRemoteService httpUrl not exist");
+            throw new FrameworkRuntimeException("getRemoteService httpUrl not exist");
         }
         String httpUrl = queryString.substring(indexOf+"httpUrl=".length());
 //        String httpUrlNoParam = null;
@@ -769,13 +769,13 @@ public class ServletUtil
         try {
              in = httpRequest.getInputStream();
         } catch (IOException e) {
-            throw new TeshehuiRuntimeException("获取输入流异常",e);
+            throw new FrameworkRuntimeException("获取输入流异常",e);
         }
         byte[] data = IOUtil.getByteArrayFromInputStream(in);
         try {
             in.close();
         } catch (IOException e) {
-            throw new TeshehuiRuntimeException("关闭输入流异常",e);
+            throw new FrameworkRuntimeException("关闭输入流异常",e);
         }
         byte[] requestData = data;
         

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.core.web.HttpServletRequestWrapper;
 import net.wwwfred.framework.core.web.ServletUtil;
 import net.wwwfred.framework.spi.response.BaseResponse;
@@ -78,7 +78,7 @@ public class ControllerAop {
 				LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
 			}
 		}
-	    catch (TeshehuiRuntimeException e)
+	    catch (FrameworkRuntimeException e)
 	    {
 	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
 	    	result = new BaseResponse<Object>(e.getCode(), e.getMessage());
@@ -86,7 +86,7 @@ public class ControllerAop {
 	    catch (Throwable e) 
 	    {
 	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
-	    	TeshehuiRuntimeException te = new TeshehuiRuntimeException(e);
+	    	FrameworkRuntimeException te = new FrameworkRuntimeException(e);
 	    	result = new BaseResponse<Object>(te.getCode(), te.getMessage());
 	    }
 	    

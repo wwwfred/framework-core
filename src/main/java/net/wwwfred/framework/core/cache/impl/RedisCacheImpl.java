@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import net.wwwfred.framework.core.cache.RedisCache;
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.util.log.LogUtil;
 import net.wwwfred.framework.util.serialize.SerializableHandler;
 import net.wwwfred.framework.util.string.StringUtil;
@@ -46,7 +46,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
 		} catch (Exception e) {
 			String msg = "redisTemplate has illegal,key="+key;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
 		}
 
     }
@@ -71,7 +71,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
             } catch (Exception e) {
                 String msg = "redisTemplate set illegal,key="+key+",value="+obj;
                 LogUtil.e(getClass().getName(), msg, e);
-                throw new TeshehuiRuntimeException(msg,e);
+                throw new FrameworkRuntimeException(msg,e);
             }
     	}
     	else
@@ -86,7 +86,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
             } catch (Exception e) {
             	String msg = "redisTemplate set illegal,key="+key+",value="+obj;
                 LogUtil.e(getClass().getName(), msg, e);
-                throw new TeshehuiRuntimeException(msg,e);
+                throw new FrameworkRuntimeException(msg,e);
             }
     	}
     }
@@ -117,7 +117,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
         } catch (Exception e) {
             String msg = "redisTemplate get illegal,key="+key;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
         }
         return null;
     }
@@ -131,7 +131,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
         } catch (Exception e) {
             String msg = "redisTemplate delete illegal,key="+key;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
         }
     }
     
@@ -150,7 +150,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
         } catch (Exception e) {
             String msg = "redisTemplate keys illegal,pattern="+pattern;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
         }
     }
     
@@ -176,7 +176,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
         } catch (Exception e) {
             String msg = "redisTemplate batchSet illegal,map="+map;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
         }
     }
     
@@ -219,7 +219,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
         } catch (Exception e) {
             String msg = "redisTemplate batchGet illegal,key="+key;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
         }
         return list;     
     }
@@ -239,7 +239,7 @@ private RedisTemplate<Serializable, Serializable> redisTemplate;
         } catch (Exception e) {
             String msg = "redisTemplate delete illegal,key="+key;
             LogUtil.e(getClass().getName(), msg, e);
-            throw new TeshehuiRuntimeException(msg,e);
+            throw new FrameworkRuntimeException(msg,e);
         }
     }
 	

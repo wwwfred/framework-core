@@ -7,7 +7,7 @@ import java.util.List;
 import net.wwwfred.framework.core.cache.MemCache;
 import net.wwwfred.framework.core.cache.RedisCache;
 import net.wwwfred.framework.core.common.CommonConstant;
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.util.code.CodeUtil;
 import net.wwwfred.framework.util.json.JSONUtil;
 import net.wwwfred.framework.util.log.LogUtil;
@@ -148,7 +148,7 @@ public class CacheAop {
 			    			{
 			    				if(!memCache.cacheObject(cacheKey, result,cacheValueValidTime))
 			    				{
-			    					throw new TeshehuiRuntimeException("memcache object result false.");
+			    					throw new FrameworkRuntimeException("memcache object result false.");
 			    				}
 			    			}
 			    			else

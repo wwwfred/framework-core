@@ -12,7 +12,7 @@ import java.util.Set;
 
 import net.wwwfred.framework.core.cache.CacheClient;
 import net.wwwfred.framework.core.cache.RedisCache;
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.util.code.CodeUtil;
 import net.wwwfred.framework.util.log.LogUtil;
 import net.wwwfred.framework.util.reflect.AliasAnnotation;
@@ -234,7 +234,7 @@ public class CacheClientImpl implements CacheClient{
             }
             updateMap.put(idCacheKey, o);
         } catch (Exception e) {
-            TeshehuiRuntimeException te = (e instanceof TeshehuiRuntimeException)?(TeshehuiRuntimeException)e:new TeshehuiRuntimeException(e);
+            FrameworkRuntimeException te = (e instanceof FrameworkRuntimeException)?(FrameworkRuntimeException)e:new FrameworkRuntimeException(e);
             throw te;
         }
         
@@ -367,7 +367,7 @@ public class CacheClientImpl implements CacheClient{
                 deleteSet.add(idCacheKey);
             }
         } catch (Exception e) {
-            TeshehuiRuntimeException te = (e instanceof TeshehuiRuntimeException)?(TeshehuiRuntimeException)e:new TeshehuiRuntimeException(e);
+            FrameworkRuntimeException te = (e instanceof FrameworkRuntimeException)?(FrameworkRuntimeException)e:new FrameworkRuntimeException(e);
             throw te;
         }
         
@@ -478,7 +478,7 @@ public class CacheClientImpl implements CacheClient{
         Class<T> clazz = (Class<T>) t.getClass();
         
         if(CodeUtil.isEmpty(new Object[]{fieldNameArray}))
-            throw new TeshehuiRuntimeException("queryOne fieldNameArray="+fieldNameArray);
+            throw new FrameworkRuntimeException("queryOne fieldNameArray="+fieldNameArray);
         
         // search index list
         List<T> list;

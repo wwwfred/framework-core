@@ -6,34 +6,34 @@ package net.wwwfred.framework.core.exception;
  */
 
 @SuppressWarnings("serial")
-public class TeshehuiRuntimeException extends RuntimeException{
+public class FrameworkRuntimeException extends RuntimeException{
     private static final String _code = "500";
 	private static final String _message="后台系统处理异常";
 	private String message;
 	private String code;
-	public TeshehuiRuntimeException() {
+	public FrameworkRuntimeException() {
 		this(null,null,null);
 	}
 	
-	public TeshehuiRuntimeException(String message, Throwable cause) {
+	public FrameworkRuntimeException(String message, Throwable cause) {
 		this(null,message,cause);
 	}
 
 	
-	public TeshehuiRuntimeException(String message) {
+	public FrameworkRuntimeException(String message) {
 		this(null,message,null);
 	}
 
-	public TeshehuiRuntimeException(Throwable cause) {
+	public FrameworkRuntimeException(Throwable cause) {
 		this(null,null,cause);
 	}
 	
-	public TeshehuiRuntimeException(String code,String message)
+	public FrameworkRuntimeException(String code,String message)
     {
 	    this(code,message,null);
     }
 	
-	public TeshehuiRuntimeException(String code,String message,Throwable cause)
+	public FrameworkRuntimeException(String code,String message,Throwable cause)
 	{
 	    super(message,cause);
 	    this.code = (code==null||"".equals(code.trim()))?_code:code;
