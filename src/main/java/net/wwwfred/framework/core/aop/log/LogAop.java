@@ -3,6 +3,7 @@ package net.wwwfred.framework.core.aop.log;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -74,11 +75,28 @@ public class LogAop {
 			    {
 			    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
 			    	requestPO[0] = httpRequest;
-			    	beforeRequstPOString = JSON.toJSONString(ServletUtil.getMapFromRequest(httpRequest));
+			    	Map<String,List<Object>> requestMap = ServletUtil.getMapFromRequest(httpRequest);
+			    	try
+			    	{
+			    		beforeRequstPOString = JSON.toJSONString(requestMap);
+			    	}
+			    	catch(Exception e)
+			    	{
+			    		beforeRequstPOString = JSONUtil.toString(requestMap);
+			    		LogUtil.w("JSON.toJSONString illegal,requestMap="+requestMap, e);
+			    	}
 			    }
 			    else
 			    {
-			    	beforeRequstPOString = JSON.toJSONString(requestPO);
+			    	try
+			    	{
+			    		beforeRequstPOString = JSON.toJSONString(requestPO);
+			    	}
+			    	catch(Exception e)
+			    	{
+			    		beforeRequstPOString = JSONUtil.toString(requestPO);
+			    		LogUtil.w("JSON.toJSONString illegal,requestPO="+requestPO, e);
+			    	}
 			    }
 		    	String afterRequestPOString = beforeRequstPOString;
 		    	long startTime = System.currentTimeMillis();
@@ -91,11 +109,29 @@ public class LogAop {
 				    {
 				    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
 				    	requestPO[0] = httpRequest;
-				    	afterRequestPOString = JSON.toJSONString(ServletUtil.getMapFromRequest(httpRequest));
+				    	Map<String,List<Object>> requestMap = ServletUtil.getMapFromRequest(httpRequest);
+				    	try
+				    	{
+				    		afterRequestPOString = JSON.toJSONString(requestMap);
+				    	}
+				    	catch(Exception e)
+				    	{
+				    		afterRequestPOString = JSONUtil.toString(requestMap);
+				    		LogUtil.w("JSON.toJSONString illegal,requestMap="+requestMap, e);
+				    	}
 				    }
 				    else
 				    {
-				    	afterRequestPOString = JSON.toJSONString(requestPO);
+				    	try
+				    	{
+				    		afterRequestPOString = JSON.toJSONString(requestPO);
+				    	}
+				    	catch(Exception e)
+				    	{
+				    		afterRequestPOString = JSONUtil.toString(requestPO);
+				    		LogUtil.w("JSON.toJSONString illegal,requestPO="+requestPO, e);
+				    	}
+				    	
 				    }
 		    		requestPOChanged = requestPO!=null&&!afterRequestPOString.equals(beforeRequstPOString);
 		        }catch (Throwable e) {
