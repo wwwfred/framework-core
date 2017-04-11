@@ -9,14 +9,11 @@ import net.wwwfred.framework.core.cache.RedisCache;
 import net.wwwfred.framework.core.common.CommonConstant;
 import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.util.code.CodeUtil;
-import net.wwwfred.framework.util.json.JSONUtil;
 import net.wwwfred.framework.util.log.LogUtil;
 import net.wwwfred.framework.util.string.StringUtil;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import com.alibaba.fastjson.JSON;
 
 /**
  * spring AOP 日志代理
@@ -103,13 +100,12 @@ public class CacheAop {
 			    		if(cacheKeyExist)
 			    		{
 			    			cacheResult = memCache!=null?memCache.getObject(cacheKey):redisCache.getObject(cacheKey);
-//			    			LogUtil.d(tag,"useTime="+(System.currentTimeMillis()-getDataFromCacheStartTime)+",getData from cache success,cacheKey="+cacheKey+",cacheValue="+JSON.toJSONString(result));
-			    			LogUtil.d(tag,"useTime="+(System.currentTimeMillis()-getDataFromCacheStartTime)+",getData from cache success,cacheKey="+cacheKey+",cacheValue="+JSON.toJSONString(result));
+			    			LogUtil.d(tag,"useTime="+(System.currentTimeMillis()-getDataFromCacheStartTime)+",getData from cache success,cacheKey="+cacheKey);
 			    		}
 			    	}
 			    	catch(Throwable e)
 			    	{
-			    		LogUtil.w(tag,"useTime="+(System.currentTimeMillis()-getDataFromCacheStartTime)+",getData from cache illegal,cacheKey="+cacheKey+",cacheValue="+JSON.toJSONString(result),e);
+			    		LogUtil.w(tag,"useTime="+(System.currentTimeMillis()-getDataFromCacheStartTime)+",getData from cache illegal,cacheKey="+cacheKey,e);
 			    	}
 		    	}
 	    		
@@ -118,55 +114,50 @@ public class CacheAop {
 	    		{
 	    			result = cacheResult;
 	    		}
-	    		// 读原生数据并写缓存；缓存数据读取不到时也是要读原生数据并写缓存的
+	    		// 读缓存，不存在，则需要读原生且重写缓存;或者直接读原生写缓存（包含!getDataNoCache&&!cacheKeyExist和getDataNoCache）
 	    		else
 	    		{
+	    			// 读原生
 	    			long getDataStartTime = System.currentTimeMillis();
 		    		try {
 		    			result = pjp.proceed(requestPO);
 		    		}catch(Throwable e)
 		    		{
-		    			LogUtil.e(tag,"useTime="+(System.currentTimeMillis()-getDataStartTime)+",getData not from cache illegal,cacheKey="+cacheKey+",noCacheValue="+JSON.toJSONString(result),e);
+		    			LogUtil.e(tag,"useTime="+(System.currentTimeMillis()-getDataStartTime)+",getData not from cache illegal,cacheKey="+cacheKey,e);
 		    			throw e;
 		    		}
-		    		String resultString;
-		    		try {
-		    			resultString = JSON.toJSONString(result);
-					} catch (Exception e) {
-						LogUtil.w("JSON.toJSONString illegal,reuslt="+result, e);
-						resultString = JSONUtil.toString(result);
-					}
-		    		LogUtil.i(tag,"useTime="+(System.currentTimeMillis()-getDataStartTime)+",getData not from cache success,cacheKey="+cacheKey+",noCacheValue="+resultString);
-//		    		if(cacheResult==null||!cacheResult.equals(result))
-//		    		if(!CodeUtil.isEmpty(cacheKey,result))
-		    		if(getDataNoCache||!cacheKeyExist)
-		    		{
+		    		LogUtil.i(tag,"useTime="+(System.currentTimeMillis()-getDataStartTime)+",getData not from cache success,cacheKey="+cacheKey);
+		    		
+		    		// 读原生后与缓存比较结果后判断是否需要重写缓存
+		    		// 缓存数据有时效性，所以每次读取原生后都会更新缓存数据的时效
+//		    		if(!JSONUtil.toString(cacheResult).equals(JSONUtil.toString(result)))
+//		    		{
 		    			long cacheDataStartTime = System.currentTimeMillis();
-			    		try
-			    		{
-			    			if(memCache!=null)
-			    			{
-			    				if(!memCache.cacheObject(cacheKey, result,cacheValueValidTime))
-			    				{
-			    					throw new FrameworkRuntimeException("memcache object result false.");
-			    				}
-			    			}
-			    			else
-			    				redisCache.setObject(cacheKey, result,cacheValueValidTime);
-			    		}
-			    		catch(Throwable e)
-			    		{
-			    			LogUtil.w(tag,"useTime="+(System.currentTimeMillis()-cacheDataStartTime)+",cacheData illegal,cacheKey="+cacheKey+",cacheValue="+resultString,e);
-			    		}
-			    		LogUtil.d(tag,"useTime="+(System.currentTimeMillis()-cacheDataStartTime)+",cacheData success,cacheKey="+cacheKey+",cacheValue="+resultString);
-		    		}
+		    			try
+		    			{
+		    				if(memCache!=null)
+		    				{
+		    					if(!memCache.cacheObject(cacheKey, result,cacheValueValidTime))
+		    					{
+		    						throw new FrameworkRuntimeException("memcache object result false.");
+		    					}
+		    				}
+		    				else
+		    					redisCache.setObject(cacheKey, result,cacheValueValidTime);
+		    			}
+		    			catch(Throwable e)
+		    			{
+		    				LogUtil.w(tag,"useTime="+(System.currentTimeMillis()-cacheDataStartTime)+",cacheData illegal,cacheKey="+cacheKey,e);
+		    			}
+		    			LogUtil.d(tag,"useTime="+(System.currentTimeMillis()-cacheDataStartTime)+",cacheData success,cacheKey="+cacheKey);
+//		    		}
+	    		
 	    		}
 	    	}
 	    	
-		} else {
+	    } else {
 			result = pjp.proceed(requestPO);
 		}
-
 		return result;
 	}
 	

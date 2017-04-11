@@ -18,8 +18,6 @@ import net.wwwfred.framework.util.log.LogUtil;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import com.alibaba.fastjson.JSON;
 //import com.teshehui.util.json.JSONUtil;
 
 /**
@@ -76,27 +74,11 @@ public class LogAop {
 			    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
 			    	requestPO[0] = httpRequest;
 			    	Map<String,List<Object>> requestMap = ServletUtil.getMapFromRequest(httpRequest);
-			    	try
-			    	{
-			    		beforeRequstPOString = JSON.toJSONString(requestMap);
-			    	}
-			    	catch(Exception e)
-			    	{
-			    		beforeRequstPOString = JSONUtil.toString(requestMap);
-			    		LogUtil.w("JSON.toJSONString illegal,requestMap="+requestMap, e);
-			    	}
+			    	beforeRequstPOString = JSONUtil.toString(requestMap);
 			    }
 			    else
 			    {
-			    	try
-			    	{
-			    		beforeRequstPOString = JSON.toJSONString(requestPO);
-			    	}
-			    	catch(Exception e)
-			    	{
-			    		beforeRequstPOString = JSONUtil.toString(requestPO);
-			    		LogUtil.w("JSON.toJSONString illegal,requestPO="+requestPO, e);
-			    	}
+			    	beforeRequstPOString = JSONUtil.toString(requestPO);
 			    }
 		    	String afterRequestPOString = beforeRequstPOString;
 		    	long startTime = System.currentTimeMillis();
@@ -110,63 +92,33 @@ public class LogAop {
 				    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
 				    	requestPO[0] = httpRequest;
 				    	Map<String,List<Object>> requestMap = ServletUtil.getMapFromRequest(httpRequest);
-				    	try
-				    	{
-				    		afterRequestPOString = JSON.toJSONString(requestMap);
-				    	}
-				    	catch(Exception e)
-				    	{
-				    		afterRequestPOString = JSONUtil.toString(requestMap);
-				    		LogUtil.w("JSON.toJSONString illegal,requestMap="+requestMap, e);
-				    	}
+				    	afterRequestPOString = JSONUtil.toString(requestMap);
 				    }
 				    else
 				    {
-				    	try
-				    	{
-				    		afterRequestPOString = JSON.toJSONString(requestPO);
-				    	}
-				    	catch(Exception e)
-				    	{
-				    		afterRequestPOString = JSONUtil.toString(requestPO);
-				    		LogUtil.w("JSON.toJSONString illegal,requestPO="+requestPO, e);
-				    	}
-				    	
+				    	afterRequestPOString = JSONUtil.toString(requestPO);
 				    }
 		    		requestPOChanged = requestPO!=null&&!afterRequestPOString.equals(beforeRequstPOString);
 		        }catch (Throwable e) {
 		        	logLevel = annotation.levelFailure();
 		        	if(LogLevelEnum.WARN.equals(logLevel))
 		        	{
-		        		LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+		        		LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
 		        	}
 		        	else
 		        	{
-		        		LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+		        		LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
 		        	}
 		        	throw e;
 		        }
-		    	try {
-		    		if(LogLevelEnum.DEBUG.equals(logLevel))
-		    		{
-		    			LogUtil.d(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result));
-		    		}
-		    		else
-		    		{
-		    			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result));
-		    		}
-				} catch (Exception e) {
-					LogUtil.w("JSON.toJSONString illegal,reuslt="+result, e);
-					if(LogLevelEnum.DEBUG.equals(logLevel))
-		    		{
-		    			LogUtil.d(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
-		    		}
-		    		else
-		    		{
-		    			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
-		    		}
-				}
-	    		
+		    	if(LogLevelEnum.DEBUG.equals(logLevel))
+	    		{
+	    			LogUtil.d(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
+	    		}
+	    		else
+	    		{
+	    			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
+	    		}
 	    	}
 	    	else
 	    	{

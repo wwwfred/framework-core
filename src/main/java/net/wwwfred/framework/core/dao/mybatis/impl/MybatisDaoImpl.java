@@ -404,8 +404,9 @@ public class MybatisDaoImpl implements BaseDao,MybatisDao,ApplicationContextAwar
 				validClazzFieldNameColumnMap.put(entry.getKey(), fieldNameColumnMap);
 			}
 		}
-        LogUtil.i(getClass().getName() + " " + getCurrentSession() + ",init clazzFieldNameColumnMap=" + validClazzFieldNameColumnMap);
-    }
+//        LogUtil.i(getClass().getName() + " " + getCurrentSession() + ",init clazzFieldNameColumnMap=" + validClazzFieldNameColumnMap);
+        LogUtil.i(getClass().getName() + " " + getCurrentSession() + ",init tableNameCollection=" + clazzTableNameMap.values());
+	}
 	
 	protected SqlSession getCurrentSession()
     {

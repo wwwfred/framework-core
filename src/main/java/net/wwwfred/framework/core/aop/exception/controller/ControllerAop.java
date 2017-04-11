@@ -71,21 +71,16 @@ public class ControllerAop {
 			}
 			requestPOChanged = requestPO != null
 					&& !afterRequestPOString.equals(beforeRequstPOString);
-			try {
-				LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result));
-			} catch (Exception e) {
-				LogUtil.w("JSON.toJSONString illegal,reuslt="+result, e);
-				LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
-			}
+			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
 		}
 	    catch (FrameworkRuntimeException e)
 	    {
-	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
 	    	result = new BaseResponse<Object>(e.getCode(), e.getMessage());
 	    }
 	    catch (Throwable e) 
 	    {
-	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
 	    	FrameworkRuntimeException te = new FrameworkRuntimeException(e);
 	    	result = new BaseResponse<Object>(te.getCode(), te.getMessage());
 	    }

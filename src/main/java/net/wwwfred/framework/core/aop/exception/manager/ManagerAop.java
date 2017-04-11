@@ -9,8 +9,6 @@ import net.wwwfred.framework.util.log.LogUtil;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import com.alibaba.fastjson.JSON;
 //import com.teshehui.util.json.JSONUtil;
 
 /**
@@ -34,31 +32,26 @@ public class ManagerAop {
 	    
 	    String tag = targetClazz.getName()+"."+method.getName();
 	    boolean requestPOChanged = false;
-	    String beforeRequstPOString = JSON.toJSONString(requestPO);
+	    String beforeRequstPOString = JSONUtil.toString(requestPO);
 	    String afterRequestPOString = beforeRequstPOString;
 	    long startTime = System.currentTimeMillis();
 	    try {
 	    	result = pjp.proceed(requestPO);
-	    	afterRequestPOString = JSON.toJSONString(requestPO);
-	    	requestPOChanged = requestPO!=null&&!JSON.toJSONString(requestPO).equals(beforeRequstPOString);
+	    	afterRequestPOString = JSONUtil.toString(requestPO);
+	    	requestPOChanged = requestPO!=null&&!afterRequestPOString.equals(beforeRequstPOString);
 	    }
 	    catch (FrameworkRuntimeException e)
 	    {
-	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
 	    	result = new BaseResponse<Object>(e.getCode(), e.getMessage());
 	    }
 	    catch (Throwable e) 
 	    {
-	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result), e);
+	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
 	    	FrameworkRuntimeException te = new FrameworkRuntimeException(e);
 	    	result = new BaseResponse<Object>(te.getCode(), te.getMessage());
 	    }
-		try {
-			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSON.toJSONString(result));
-		} catch (Exception e) {
-			LogUtil.w("JSON.toJSONString illegal,reuslt="+result, e);
-			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
-		}
+	    LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
 		return result;
 	}
 	
