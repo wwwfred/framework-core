@@ -15,8 +15,6 @@ import net.wwwfred.framework.util.log.LogUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import com.alibaba.fastjson.JSON;
-
 /**
  * spring AOP controller代理
  * @author Administrator
@@ -40,51 +38,48 @@ public class ControllerAop {
 	    
 	    boolean requestPOChanged = false;
     	String beforeRequstPOString;
-		if (requestPO != null && requestPO.length > 0
-				&& !CodeUtil.isEmpty(requestPO[0])
-				&& requestPO[0] instanceof HttpServletRequest) {
-			HttpServletRequest httpRequest = new HttpServletRequestWrapper(
-					(HttpServletRequest) requestPO[0]);
-			requestPO[0] = httpRequest;
-			beforeRequstPOString = JSON.toJSONString(ServletUtil
-					.getMapFromRequest(httpRequest));
-		}
+//	    String requstPOString;
+    	if(requestPO!=null&&requestPO.length>0&&requestPO.getClass().isArray()&&!CodeUtil.isEmpty(requestPO[0])&&requestPO[0] instanceof HttpServletRequest)
+	    {
+	    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
+	    	requestPO[0] = httpRequest;
+	    	beforeRequstPOString = JSONUtil.toString(ServletUtil.getMapFromRequest(httpRequest));
+	    }
 	    else
 	    {
-	    	beforeRequstPOString = JSON.toJSONString(requestPO);
+	    	beforeRequstPOString = JSONUtil.toString(requestPO);
 	    }
-    	String afterRequestPOString = beforeRequstPOString;
-	    
+	    String afterRequestPOString = beforeRequstPOString;
+	    String responsePOString = null;
 	    long startTime = System.currentTimeMillis();
 	    try {
 	    	result = pjp.proceed(requestPO);
-			if (requestPO != null && requestPO.length > 0
-					&& !CodeUtil.isEmpty(requestPO[0])
-					&& requestPO[0] instanceof HttpServletRequest) {
-				HttpServletRequest httpRequest = new HttpServletRequestWrapper(
-						(HttpServletRequest) requestPO[0]);
-				requestPO[0] = httpRequest;
-				afterRequestPOString = JSON.toJSONString(ServletUtil
-						.getMapFromRequest(httpRequest));
-			} else {
-				afterRequestPOString = JSON.toJSONString(requestPO);
-			}
-			requestPOChanged = requestPO != null
-					&& !afterRequestPOString.equals(beforeRequstPOString);
-			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
-		}
+	    	responsePOString = JSONUtil.toString(result);
+	    	if(requestPO!=null&&requestPO.length>0&&requestPO.getClass().isArray()&&!CodeUtil.isEmpty(requestPO[0])&&requestPO[0] instanceof HttpServletRequest)
+		    {
+		    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
+		    	requestPO[0] = httpRequest;
+		    	afterRequestPOString = JSONUtil.toString(ServletUtil.getMapFromRequest(httpRequest));
+		    }
+		    else
+		    {
+		    	afterRequestPOString = JSONUtil.toString(requestPO);
+		    }
+    		requestPOChanged = afterRequestPOString!=null&&!afterRequestPOString.equals(beforeRequstPOString);
+	    }
 	    catch (FrameworkRuntimeException e)
 	    {
-	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
-	    	result = new BaseResponse<Object>(e.getCode(), e.getMessage());
+	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString, e);
+	    	result = JSONUtil.toString(new BaseResponse<Object>(e.getCode(), e.getMessage()));
 	    }
 	    catch (Throwable e) 
 	    {
-	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
+	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString, e);
 	    	FrameworkRuntimeException te = new FrameworkRuntimeException(e);
-	    	result = new BaseResponse<Object>(te.getCode(), te.getMessage());
+	    	result = JSONUtil.toString(new BaseResponse<Object>(te.getCode(), te.getMessage()));
 	    }
-	    
+	    LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString);
+
 		return result;
 	}
 	

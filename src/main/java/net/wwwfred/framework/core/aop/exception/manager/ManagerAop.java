@@ -34,24 +34,27 @@ public class ManagerAop {
 	    boolean requestPOChanged = false;
 	    String beforeRequstPOString = JSONUtil.toString(requestPO);
 	    String afterRequestPOString = beforeRequstPOString;
+	    String responsePOString = null;
 	    long startTime = System.currentTimeMillis();
 	    try {
 	    	result = pjp.proceed(requestPO);
+	    	responsePOString = JSONUtil.toString(result);
 	    	afterRequestPOString = JSONUtil.toString(requestPO);
-	    	requestPOChanged = requestPO!=null&&!afterRequestPOString.equals(beforeRequstPOString);
+	    	requestPOChanged = afterRequestPOString!=null&&afterRequestPOString.equals(beforeRequstPOString);
 	    }
 	    catch (FrameworkRuntimeException e)
 	    {
-	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
+	    	LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString, e);
 	    	result = new BaseResponse<Object>(e.getCode(), e.getMessage());
 	    }
 	    catch (Throwable e) 
 	    {
-	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
+	    	LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString, e);
 	    	FrameworkRuntimeException te = new FrameworkRuntimeException(e);
 	    	result = new BaseResponse<Object>(te.getCode(), te.getMessage());
 	    }
-	    LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
+		LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString);
+
 		return result;
 	}
 	

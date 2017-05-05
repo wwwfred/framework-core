@@ -3,7 +3,6 @@ package net.wwwfred.framework.core.aop.log;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,8 +10,6 @@ import net.wwwfred.framework.core.common.CommonConstant;
 import net.wwwfred.framework.core.web.HttpServletRequestWrapper;
 import net.wwwfred.framework.core.web.ServletUtil;
 import net.wwwfred.framework.util.code.CodeUtil;
-import net.wwwfred.framework.util.date.DatetimeFormat;
-import net.wwwfred.framework.util.date.DatetimeUtil;
 import net.wwwfred.framework.util.json.JSONUtil;
 import net.wwwfred.framework.util.log.LogUtil;
 
@@ -65,59 +62,57 @@ public class LogAop {
 	    	
 	    	if(!LogLevelEnum.OFF.equals(annotation.levelSuccess())&&!LogLevelEnum.OFF.equals(annotation.levelFailure()))
 	    	{
-
 		    	boolean requestPOChanged = false;
-		    	
 		    	String beforeRequstPOString;
 			    if(requestPO!=null&&requestPO.length>0&&!CodeUtil.isEmpty(requestPO[0])&&requestPO[0] instanceof HttpServletRequest)
 			    {
 			    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
 			    	requestPO[0] = httpRequest;
-			    	Map<String,List<Object>> requestMap = ServletUtil.getMapFromRequest(httpRequest);
-			    	beforeRequstPOString = JSONUtil.toString(requestMap);
+			    	beforeRequstPOString = JSONUtil.toString(ServletUtil.getMapFromRequest(httpRequest));
 			    }
 			    else
 			    {
 			    	beforeRequstPOString = JSONUtil.toString(requestPO);
 			    }
 		    	String afterRequestPOString = beforeRequstPOString;
+		    	String responsePOString = null;
 		    	long startTime = System.currentTimeMillis();
 		    	LogLevelEnum logLevel;
 		    	try {
-		    		LogUtil.d(tag, "startTime="+(DatetimeUtil.longToDateTimeString(startTime, DatetimeFormat.STANDARED_DATE_TIME_FORMAT))+message+",requestPO="+beforeRequstPOString);
+//		    		LogUtil.d(tag, "startTime="+(DatetimeUtil.longToDateTimeString(startTime, DatetimeFormat.STANDARED_DATE_TIME_FORMAT))+message+",requestPO="+beforeRequstPOString);
 		    		result = pjp.proceed(requestPO);
+		    		responsePOString = JSONUtil.toString(result);
 		    		logLevel = annotation.levelSuccess();
 				    if(requestPO!=null&&requestPO.length>0&&requestPO.getClass().isArray()&&!CodeUtil.isEmpty(requestPO[0])&&requestPO[0] instanceof HttpServletRequest)
 				    {
 				    	HttpServletRequest httpRequest = new HttpServletRequestWrapper((HttpServletRequest) requestPO[0]);
 				    	requestPO[0] = httpRequest;
-				    	Map<String,List<Object>> requestMap = ServletUtil.getMapFromRequest(httpRequest);
-				    	afterRequestPOString = JSONUtil.toString(requestMap);
+				    	afterRequestPOString = JSONUtil.toString(ServletUtil.getMapFromRequest(httpRequest));
 				    }
 				    else
 				    {
 				    	afterRequestPOString = JSONUtil.toString(requestPO);
 				    }
-		    		requestPOChanged = requestPO!=null&&!afterRequestPOString.equals(beforeRequstPOString);
+		    		requestPOChanged = afterRequestPOString!=null&&!afterRequestPOString.equals(beforeRequstPOString);
 		        }catch (Throwable e) {
 		        	logLevel = annotation.levelFailure();
 		        	if(LogLevelEnum.WARN.equals(logLevel))
 		        	{
-		        		LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
+		        		LogUtil.w(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString, e);
 		        	}
 		        	else
 		        	{
-		        		LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result), e);
+		        		LogUtil.e(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString, e);
 		        	}
 		        	throw e;
 		        }
-		    	if(LogLevelEnum.DEBUG.equals(logLevel))
+	    		if(LogLevelEnum.DEBUG.equals(logLevel))
 	    		{
-	    			LogUtil.d(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
+	    			LogUtil.d(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString);
 	    		}
 	    		else
 	    		{
-	    			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+(requestPOChanged?(beforeRequstPOString+"-->"+afterRequestPOString):(beforeRequstPOString))+",responsePO="+JSONUtil.toString(result));
+	    			LogUtil.i(tag, "useTime="+(System.currentTimeMillis()-startTime)+message+",requestPO="+beforeRequstPOString+(requestPOChanged?(",changedRequestPO="+afterRequestPOString):"")+",responsePO="+responsePOString);
 	    		}
 	    	}
 	    	else
